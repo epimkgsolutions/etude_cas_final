@@ -1,0 +1,261 @@
+version: 2
+
+sources:
+  - name: raw_local_bike
+    description: "Tables sources brutes importées depuis les CSV Local Bike"
+    database: databird-489009
+    schema: raw_data_localbike
+    tables:
+      - name: brands
+        description: "Liste des marques de vélos"
+        columns:
+          - name: brand_id
+            description: "Identifiant unique de la marque"
+            data_type: integer
+            tests:
+              - unique
+              - not_null
+          - name: brand_name
+            description: "Nom de la marque"
+            data_type: string
+            tests:
+              - not_null
+
+      - name: categories
+        description: "Liste des catégories de produits"
+        columns:
+          - name: category_id
+            description: "Identifiant unique de la catégorie"
+            data_type: integer
+            tests:
+              - unique
+              - not_null
+          - name: category_name
+            description: "Nom de la catégorie"
+            data_type: string
+            tests:
+              - not_null
+
+      - name: customers
+        description: "Liste des clients"
+        columns:
+          - name: customer_id
+            description: "Identifiant unique du client"
+            data_type: integer
+            tests:
+              - unique
+              - not_null
+          - name: first_name
+            description: "Prénom du client"
+            data_type: string
+          - name: last_name
+            description: "Nom du client"
+            data_type: string
+          - name: phone
+            description: "Numéro de téléphone"
+            data_type: string
+          - name: email
+            description: "Adresse email"
+            data_type: string
+          - name: street
+            description: "Adresse (rue)"
+            data_type: string
+          - name: city
+            description: "Ville"
+            data_type: string
+          - name: state
+            description: "État/Province"
+            data_type: string
+          - name: zip_code
+            description: "Code postal"
+            data_type: integer
+
+      - name: order_items
+        description: "Articles dans les commandes"
+        columns:
+          - name: order_id
+            description: "Identifiant de la commande"
+            data_type: integer
+            tests:
+              - not_null
+          - name: item_id
+            description: "Identifiant de l'article dans la commande"
+            data_type: integer
+            tests:
+              - unique
+              - not_null
+          - name: product_id
+            description: "Identifiant du produit"
+            data_type: integer
+            tests:
+              - not_null
+          - name: quantity
+            description: "Quantité commandée"
+            data_type: integer
+            tests:
+              - not_null
+          - name: list_price
+            description: "Prix unitaire"
+            data_type: float64
+            tests:
+              - not_null
+          - name: discount
+            description: "Discount appliqué (0-1)"
+            data_type: float64
+
+      - name: orders
+        description: "Commandes"
+        columns:
+          - name: order_id
+            description: "Identifiant unique de la commande"
+            data_type: integer
+            tests:
+              - unique
+              - not_null
+          - name: customer_id
+            description: "Identifiant du client"
+            data_type: integer
+            tests:
+              - not_null
+          - name: order_status
+            description: "Statut de la commande (1=Pending, 2=Processing, 3=Rejected, 4=Completed)"
+            data_type: integer
+          - name: order_date
+            description: "Date de la commande"
+            data_type: string
+            tests:
+              - not_null
+          - name: required_date
+            description: "Date de livraison requise"
+            data_type: string
+          - name: shipped_date
+            description: "Date d'expédition"
+            data_type: string
+          - name: store_id
+            description: "Identifiant du magasin"
+            data_type: integer
+            tests:
+              - not_null
+          - name: staff_id
+            description: "Identifiant du vendeur"
+            data_type: integer
+            tests:
+              - not_null
+
+      - name: products
+        description: "Catalogue de produits"
+        columns:
+          - name: product_id
+            description: "Identifiant unique du produit"
+            data_type: integer
+            tests:
+              - unique
+              - not_null
+          - name: product_name
+            description: "Nom du produit"
+            data_type: string
+            tests:
+              - not_null
+          - name: brand_id
+            description: "Identifiant de la marque"
+            data_type: integer
+            tests:
+              - not_null
+          - name: category_id
+            description: "Identifiant de la catégorie"
+            data_type: integer
+            tests:
+              - not_null
+          - name: model_year
+            description: "Année du modèle"
+            data_type: integer
+          - name: list_price
+            description: "Prix de liste"
+            data_type: float64
+            tests:
+              - not_null
+
+      - name: staffs
+        description: "Employés/vendeurs"
+        columns:
+          - name: staff_id
+            description: "Identifiant unique de l'employé"
+            data_type: integer
+            tests:
+              - unique
+              - not_null
+          - name: first_name
+            description: "Prénom"
+            data_type: string
+          - name: last_name
+            description: "Nom"
+            data_type: string
+          - name: email
+            description: "Email"
+            data_type: string
+          - name: phone
+            description: "Téléphone"
+            data_type: string
+          - name: active
+            description: "Actif (1) ou inactif (0)"
+            data_type: integer
+          - name: store_id
+            description: "Identifiant du magasin"
+            data_type: integer
+            tests:
+              - not_null
+          - name: manager_id
+            description: "Identifiant du manager"
+            data_type: float64
+
+      - name: stocks
+        description: "Inventaire par magasin et produit"
+        columns:
+          - name: store_id
+            description: "Identifiant du magasin"
+            data_type: integer
+            tests:
+              - not_null
+          - name: product_id
+            description: "Identifiant du produit"
+            data_type: integer
+            tests:
+              - not_null
+          - name: quantity
+            description: "Quantité en stock"
+            data_type: integer
+            tests:
+              - not_null
+
+      - name: stores
+        description: "Magasins Local Bike"
+        columns:
+          - name: store_id
+            description: "Identifiant unique du magasin"
+            data_type: integer
+            tests:
+              - unique
+              - not_null
+          - name: store_name
+            description: "Nom du magasin"
+            data_type: string
+            tests:
+              - not_null
+          - name: phone
+            description: "Téléphone"
+            data_type: string
+          - name: email
+            description: "Email"
+            data_type: string
+          - name: street
+            description: "Adresse (rue)"
+            data_type: string
+          - name: city
+            description: "Ville"
+            data_type: string
+          - name: state
+            description: "État"
+            data_type: string
+          - name: zip_code
+            description: "Code postal"
+            data_type: integer

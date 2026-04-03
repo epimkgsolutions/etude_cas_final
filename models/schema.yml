@@ -1,0 +1,8 @@
+version: 2
+
+# Fichier principal de schéma
+# Les tests détaillés pour chaque couche (staging, intermediate, marts)
+# sont définis dans les fichiers _schema.yml respectifs
+
+# Tests communs et validations de cross-layer
+# sont à ajouter ici si nécessaire
