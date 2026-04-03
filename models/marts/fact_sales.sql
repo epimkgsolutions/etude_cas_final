@@ -42,4 +42,4 @@ SELECT
     net_revenue,
     CURRENT_TIMESTAMP() AS dbt_loaded_at
 FROM orders_dates
-WHERE order_status = 4  -- Completed orders only
+WHERE CAST(order_status AS INT64) = 4  -- Completed orders only

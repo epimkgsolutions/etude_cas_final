@@ -1,30 +1,36 @@
-{{ config(materialized='view', schema='intermediate') }}
+{{ config(
+    materialized='table',
+    schema='intermediate'
+) }}
 
-WITH stocks AS (
+WITH stg_stocks AS (
     SELECT * FROM {{ ref('stg_stocks') }}
 ),
-products AS (
+
+stg_products AS (
     SELECT * FROM {{ ref('stg_products') }}
 ),
-stores AS (
+
+stg_stores AS (
     SELECT * FROM {{ ref('stg_stores') }}
+),
+
+enriched AS (
+    SELECT
+        s.store_id,
+        s.product_id,
+        s.quantity,
+        p.product_name,
+        p.brand_id,
+        p.category_id,
+        p.list_price,
+        st.store_name,
+        st.city,
+        st.state,
+        CURRENT_TIMESTAMP() AS dbt_loaded_at
+    FROM stg_stocks s
+    LEFT JOIN stg_products p ON s.product_id = p.product_id
+    LEFT JOIN stg_stores st ON s.store_id = st.store_id
 )
 
-SELECT
-    st.store_id,
-    st.product_id,
-    st.stock_quantity,
-    
-    -- Informations produit
-    p.product_name,
-    p.list_price,
-    ROUND(st.stock_quantity * p.list_price, 2) AS stock_value,
-    
-    -- Informations magasin
-    s.store_name,
-    s.city,
-    s.state
-
-FROM stocks st
-LEFT JOIN products p ON st.product_id = p.product_id
-LEFT JOIN stores s ON st.store_id = s.store_id
+SELECT * FROM enriched
