@@ -16,8 +16,8 @@ orders_dates AS (
         o.store_id,
         o.staff_id,
         o.order_status,
-        CAST(o.order_date AS DATE) AS order_date,
-        CAST(o.shipped_date AS DATE) AS shipped_date,
+        SAFE.PARSE_DATE('%Y-%m-%d', o.order_date) AS order_date,
+        SAFE.PARSE_DATE('%Y-%m-%d', o.shipped_date) AS shipped_date,
         oi.quantity,
         oi.list_price,
         oi.discount,
@@ -42,4 +42,4 @@ SELECT
     net_revenue,
     CURRENT_TIMESTAMP() AS dbt_loaded_at
 FROM orders_dates
-WHERE CAST(order_status AS INT64) = 4  -- Completed orders only
+WHERE CAST(order_status AS INT64) = 4
