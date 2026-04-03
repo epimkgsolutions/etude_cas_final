@@ -1,27 +1,52 @@
-total_orders       = COUNT(DISTINCT order_id)     -- Loyauté
-lifetime_revenue   = SUM(net_revenue)             -- Valeur client ⭐
-days_since_last_order = DATE_DIFF(today, max(order_date))  -- Récence
+{{ config(
+    materialized='table',
+    schema='marts'
+) }}
 
-customer_segment = CASE
-  WHEN total_orders >= 5 THEN 'Loyal'    -- VIP
-  WHEN total_orders >= 2 THEN 'Regular'  -- Engagés
-  ELSE 'One-Time'                         -- À relancer
-END
-```
+WITH stg_customers AS (
+    SELECT * FROM {{ ref('stg_customers') }}
+),
 
-**Cas d'usage** :
-```
-Analyse : "Qui sont nos clients à risque de partir ?"
-Réponse : customer_segment='Regular' ET recency_segment='At Risk'
-```
+order_metrics AS (
+    SELECT
+        o.customer_id,
+        COUNT(DISTINCT o.order_id) AS total_orders,
+        SUM(oi.quantity * oi.list_price * (1 - oi.discount)) AS lifetime_revenue,
+        MAX(o.order_date) AS last_order_date,
+        DATE_DIFF(CURRENT_DATE(), CAST(MAX(o.order_date) AS DATE), DAY) AS days_since_last_order
+    FROM {{ ref('stg_orders') }} o
+    LEFT JOIN {{ ref('stg_order_items') }} oi ON o.order_id = oi.order_id
+    GROUP BY o.customer_id
+),
 
----
+customer_segments AS (
+    SELECT
+        c.customer_id,
+        c.first_name,
+        c.last_name,
+        c.email,
+        c.phone,
+        c.street,
+        c.city,
+        c.state,
+        c.zip_code,
+        COALESCE(om.total_orders, 0) AS total_orders,
+        COALESCE(om.lifetime_revenue, 0) AS lifetime_revenue,
+        COALESCE(om.last_order_date, NULL) AS last_order_date,
+        COALESCE(om.days_since_last_order, 999) AS days_since_last_order,
+        CASE
+            WHEN COALESCE(om.total_orders, 0) >= 5 THEN 'Loyal'
+            WHEN COALESCE(om.total_orders, 0) >= 2 THEN 'Regular'
+            ELSE 'One-Time'
+        END AS customer_segment,
+        CASE
+            WHEN COALESCE(om.days_since_last_order, 999) < 30 THEN 'Active'
+            WHEN COALESCE(om.days_since_last_order, 999) < 90 THEN 'At Risk'
+            ELSE 'Churned'
+        END AS recency_segment,
+        CURRENT_TIMESTAMP() AS dbt_loaded_at
+    FROM stg_customers c
+    LEFT JOIN order_metrics om ON c.customer_id = om.customer_id
+)
 
-### **6. mart_monthly_sales** (Agrégat pour Dashboard)
-
-**Définition** : **1 ligne = 1 mois × 1 magasin × 1 catégorie**
-
-**Grain** : Pré-agrégé au niveau mensuel
-```
-sales_month=2016-01-01, store_id=2, category_id=1
-  → num_orders=5, total_net_revenue=$4999.50, discount_rate=0.08
+SELECT * FROM customer_segments
