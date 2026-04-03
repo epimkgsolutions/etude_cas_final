@@ -1,0 +1,75 @@
+version: 2
+
+models:
+  - name: stg_brands
+    description: Brands nettoyés
+    columns:
+      - name: brand_id
+        data_tests:
+          - unique
+          - not_null
+      - name: brand_name
+        data_tests:
+          - not_null
+
+  - name: stg_categories
+    description: Catégories nettoyées
+    columns:
+      - name: category_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_stores
+    description: Magasins nettoyés
+    columns:
+      - name: store_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_orders
+    description: Commandes nettoyées
+    columns:
+      - name: order_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_order_items
+    description: Articles de commande
+    columns:
+      - name: order_id
+        data_tests:
+          - not_null
+
+  - name: stg_products
+    description: Produits nettoyés
+    columns:
+      - name: product_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_customers
+    description: Clients nettoyés
+    columns:
+      - name: customer_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_staffs
+    description: Staffs nettoyés
+    columns:
+      - name: staff_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_stocks
+    description: Stocks nettoyés
+    columns:
+      - name: store_id
+        data_tests:
+          - not_null
