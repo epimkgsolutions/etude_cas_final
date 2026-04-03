@@ -14,7 +14,7 @@ stg_products AS (
 SELECT
     s.store_id,
     s.product_id,
-    CAST(s.quantity AS INT64) AS quantity,
+    CAST(s.stock_quantity AS INT64) AS quantity,
     p.product_name,
     p.brand_id,
     p.category_id,
