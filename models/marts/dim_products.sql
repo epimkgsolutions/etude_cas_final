@@ -1,21 +1,40 @@
-price_segment = CASE
-  WHEN list_price < 500 THEN 'Budget'
-  WHEN list_price < 1500 THEN 'Mid-Range'
-  WHEN list_price < 3000 THEN 'Premium'
-  ELSE 'Ultra-Premium'
-END
-```
+{{ config(
+    materialized='table',
+    schema='marts'
+) }}
 
-**Pourquoi** : Permet à Power BI de répondre = *"Quel segment génère le plus de CA ?"*
+WITH stg_products AS (
+    SELECT * FROM {{ ref('stg_products') }}
+),
 
----
+stg_brands AS (
+    SELECT * FROM {{ ref('stg_brands') }}
+),
 
-### **4. dim_stores** (Dimension magasin)
+stg_categories AS (
+    SELECT * FROM {{ ref('stg_categories') }}
+),
 
-**Définition** : **1 ligne = 1 magasin** (3 stores)
+enriched AS (
+    SELECT
+        p.product_id,
+        p.product_name,
+        b.brand_id,
+        b.brand_name,
+        c.category_id,
+        c.category_name,
+        p.model_year,
+        p.list_price,
+        CASE
+            WHEN p.list_price < 500 THEN 'Budget'
+            WHEN p.list_price < 1500 THEN 'Mid-Range'
+            WHEN p.list_price < 3000 THEN 'Premium'
+            ELSE 'Ultra-Premium'
+        END AS price_segment,
+        CURRENT_TIMESTAMP() AS dbt_loaded_at
+    FROM stg_products p
+    LEFT JOIN stg_brands b ON p.brand_id = b.brand_id
+    LEFT JOIN stg_categories c ON p.category_id = c.category_id
+)
 
-**Simple & immutable** : Les attributs ne changent pas → **SCD Type 0**
-```
-store_id=1 → Santa Cruz, CA (West Coast)
-store_id=2 → Baldwin, NY (Northeast)  ← 68% du CA total
-store_id=3 → Rowlett, TX (South)
+SELECT * FROM enriched

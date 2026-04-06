@@ -6,22 +6,23 @@ models:
     columns:
       - name: order_id
         description: Identifiant unique de la commande
-        data_tests:
+        tests:
           - not_null
       - name: product_id
         description: Clé étrangère vers dim_products
-        data_tests:
+        tests:
           - not_null
           - relationships:
-              to: ref('dim_products')
-              field: product_id
+              arguments:
+                to: ref('dim_products')
+                column: product_id
       - name: store_id
         description: Clé étrangère vers dim_stores
-        data_tests:
+        tests:
           - not_null
       - name: net_revenue
         description: Revenu net après remises
-        data_tests:
+        tests:
           - not_null
 
   - name: dim_date
@@ -29,7 +30,7 @@ models:
     columns:
       - name: date_key
         description: Clé primaire YYYYMMDD
-        data_tests:
+        tests:
           - unique
           - not_null
 
@@ -38,7 +39,7 @@ models:
     columns:
       - name: product_id
         description: Clé primaire
-        data_tests:
+        tests:
           - unique
           - not_null
 
@@ -47,7 +48,7 @@ models:
     columns:
       - name: store_id
         description: Clé primaire
-        data_tests:
+        tests:
           - unique
           - not_null
 
@@ -56,7 +57,7 @@ models:
     columns:
       - name: customer_id
         description: Clé primaire
-        data_tests:
+        tests:
           - unique
           - not_null
 
@@ -65,5 +66,5 @@ models:
     columns:
       - name: sales_month
         description: Premier jour du mois
-        data_tests:
+        tests:
           - not_null

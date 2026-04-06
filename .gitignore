@@ -3,3 +3,4 @@ dbt_packages/
 *.pyc
 .env
 .DS_Store
+dbt_internal_packages/
