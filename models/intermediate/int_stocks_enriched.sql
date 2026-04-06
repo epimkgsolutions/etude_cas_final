@@ -1,24 +1,30 @@
-{{ config(
-    materialized='table',
-    schema='intermediate'
-) }}
+{{ config(materialized='view', schema='intermediate') }}
 
-WITH stg_stocks AS (
+WITH stocks AS (
     SELECT * FROM {{ ref('stg_stocks') }}
 ),
-
-stg_products AS (
+products AS (
     SELECT * FROM {{ ref('stg_products') }}
+),
+stores AS (
+    SELECT * FROM {{ ref('stg_stores') }}
 )
 
 SELECT
-    s.store_id,
-    s.product_id,
-    CAST(s.stock_quantity AS INT64) AS quantity,
+    st.store_id,
+    st.product_id,
+    st.stock_quantity,
+    
+    -- Informations produit
     p.product_name,
-    p.brand_id,
-    p.category_id,
     p.list_price,
-    CURRENT_TIMESTAMP() AS dbt_loaded_at
-FROM stg_stocks s
-LEFT JOIN stg_products p ON s.product_id = p.product_id
+    ROUND(st.stock_quantity * p.list_price, 2) AS stock_value,
+    
+    -- Informations magasin
+    s.store_name,
+    s.city,
+    s.state
+
+FROM stocks st
+LEFT JOIN products p ON st.product_id = p.product_id
+LEFT JOIN stores s ON st.store_id = s.store_id

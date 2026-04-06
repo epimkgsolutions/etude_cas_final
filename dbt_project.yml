@@ -15,8 +15,8 @@ clean-targets:
   - "dbt_packages"
 
 vars:
-  gcp_project_id: "databird-489009"  # ← Remplace par ton vrai projet
-  dataset_name: "raw_data_localbike"         # ← Nom du dataset dans BigQuery
+  gcp_project_id: "databird-489009"   
+  dataset_name: "raw_data_localbike"        
 
 models:
   local_bike:
