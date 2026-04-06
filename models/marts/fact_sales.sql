@@ -42,4 +42,3 @@ SELECT
     net_revenue,
     CURRENT_TIMESTAMP() AS dbt_loaded_at
 FROM orders_dates
-WHERE order_status = 'Completed'
