@@ -34,13 +34,32 @@ dbt docs generate
 - **Data Source**: BigQuery (`raw_localbike`)
 - **Refresh Frequency**: Manual (ad-hoc)
 
+## Power BI Report Overview
+
+### Cover Page
+![Cover Page](powerbi_screenshots/cover.png)
+
+### Executive Overview Dashboard
+![Executive Overview](powerbi_screenshots/page%201.png)
+
+### Product Portfolio & Revenue Analysis
+![Product Portfolio](powerbi_screenshots/page%202.png)
+
+### Discount Impact Analysis
+![Discount Impact](powerbi_screenshots/page%203.png)
+
+### Order Status & Conversion Pipeline
+![Order Status](powerbi_screenshots/page%204.png)
+
+*Interactive 5-page dashboard with synchronized slicers for Store and Date Range filtering.*
+
 ### Key Metrics
 - Total Revenue: $8,578,244
 - Orders: 1,615 (Completion Rate: 89.5%)
 - Rejected Orders: 45 (2.8% loss)
 - DAX Measures: 17+ (DISTINCTCOUNT, CALCULATE, IF, VAR)
 
-
+![alt text](powerbi_screenshots/cover.png)
 ### Pages Structure
 
 #### Page 0: Cover
