@@ -2,9 +2,23 @@
 
 ## Project Structure
 
-- **staging**: Données brutes nettoyées (9 modèles)
-- **intermediate**: Jointures métier (2 modèles)
-- **marts**: Star schema pour Power BI (6 modèles)
+* **Staging Layer**: Raw data cleaning and standardization (9 models)
+  - Cleans and validates source data from BigQuery
+  - Each table includes a source_id column for data lineage
+  
+* **Intermediate Layer**: Business logic and complex transformations (2 models)
+  - int_order_items_enriched: Order items with product details and discounts
+  - int_stocks_enriched: Inventory data enriched with location info
+  
+* **Marts Layer**: Dimensional star schema optimized for Power BI analytics (6 models)
+  - fact_sales: Sales transactions grain (1 item per row, 4,722 rows)
+  - dim_customers, dim_products, dim_stores, dim_categories, dim_date
+  
+* **Data Quality**: Complete test coverage with native dbt tests
+  - Unique constraints (primary keys)
+  - Not null validations (required fields)
+  - Referential integrity (foreign keys)
+  - Business rule validations
 
 ## Running this project
 ```bash
